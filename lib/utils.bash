@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for terramate.
 GH_REPO="https://github.com/mineiros-io/terramate"
 TOOL_NAME="terramate"
 TOOL_TEST="terramate --version"
@@ -14,7 +13,6 @@ fail() {
 
 curl_opts=(-fsSL)
 
-# NOTE: You might want to remove this if terramate is not hosted on GitHub releases.
 if [ -n "${GITHUB_API_TOKEN:-}" ]; then
   curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_API_TOKEN")
 fi
@@ -27,22 +25,22 @@ sort_versions() {
 list_github_tags() {
   git ls-remote --tags --refs "$GH_REPO" |
     grep -o 'refs/tags/.*' | cut -d/ -f3- |
-    sed 's/^v//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
+    sed 's/^v//'
 }
 
 list_all_versions() {
-  # TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-  # Change this function if terramate has other means of determining installable versions.
   list_github_tags
 }
 
 download_release() {
+  platform=$(get_platform)
+  arch=$(get_arch)
+
   local version filename url
   version="$1"
   filename="$2"
 
-  # TODO: Adapt the release URL convention for terramate
-  url="$GH_REPO/archive/v${version}.tar.gz"
+  url="$GH_REPO/releases/download/v${version}/${TOOL_NAME}_${platform}_${arch}.tar.gz"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -61,7 +59,6 @@ install_version() {
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-    # TODO: Assert terramate executable exists.
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
     test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
@@ -71,4 +68,33 @@ install_version() {
     rm -rf "$install_path"
     fail "An error occurred while installing $TOOL_NAME $version."
   )
+}
+
+get_arch() {
+  local arch=""
+
+  case "$(uname -m)" in
+    x86_64 | amd64) arch="x86_64" ;;
+    i686 | i386) arch="i386" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      fail "Arch '$(uname -m)' not supported!"
+      ;;
+  esac
+
+  echo -n $arch
+}
+
+get_platform() {
+  local platform=""
+
+  case "$(uname | tr '[:upper:]' '[:lower:]')" in
+    darwin) platform="darwin" ;;
+    linux) platform="linux" ;;
+    *)
+      fail "Platform '$(uname -m)' not supported!"
+      ;;
+  esac
+
+  echo -n $platform
 }
