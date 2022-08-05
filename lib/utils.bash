@@ -40,7 +40,7 @@ download_release() {
   version="$1"
   filename="$2"
 
-  url="$GH_REPO/releases/download/v${version}/${TOOL_NAME}_${platform}_${arch}.tar.gz"
+  url="$GH_REPO/releases/download/v${version}/${TOOL_NAME}_${version}_${platform}_${arch}.tar.gz"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -74,12 +74,12 @@ get_arch() {
   local arch=""
 
   case "$(uname -m)" in
-    x86_64 | amd64) arch="x86_64" ;;
-    i686 | i386) arch="i386" ;;
-    aarch64 | arm64) arch="arm64" ;;
-    *)
-      fail "Arch '$(uname -m)' not supported!"
-      ;;
+  x86_64 | amd64) arch="x86_64" ;;
+  i686 | i386) arch="i386" ;;
+  aarch64 | arm64) arch="arm64" ;;
+  *)
+    fail "Arch '$(uname -m)' not supported!"
+    ;;
   esac
 
   echo -n $arch
@@ -89,11 +89,11 @@ get_platform() {
   local platform=""
 
   case "$(uname | tr '[:upper:]' '[:lower:]')" in
-    darwin) platform="darwin" ;;
-    linux) platform="linux" ;;
-    *)
-      fail "Platform '$(uname -m)' not supported!"
-      ;;
+  darwin) platform="darwin" ;;
+  linux) platform="linux" ;;
+  *)
+    fail "Platform '$(uname -m)' not supported!"
+    ;;
   esac
 
   echo -n $platform
