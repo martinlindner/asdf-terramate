@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-GH_REPO="https://github.com/mineiros-io/terramate"
+GH_REPO="https://github.com/terramate-io/terramate"
 TOOL_NAME="terramate"
 TOOL_TEST="terramate --version"
 

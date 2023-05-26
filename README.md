@@ -3,7 +3,7 @@
 # asdf-terramate [![Build](https://github.com/martinlindner/asdf-terramate/actions/workflows/build.yml/badge.svg)](https://github.com/martinlindner/asdf-terramate/actions/workflows/build.yml) [![Lint](https://github.com/martinlindner/asdf-terramate/actions/workflows/lint.yml/badge.svg)](https://github.com/martinlindner/asdf-terramate/actions/workflows/lint.yml)
 
 
-[terramate](https://github.com/mineiros-io/terramate) plugin for the [asdf version manager](https://asdf-vm.com).
+[terramate](https://github.com/terramate-io/terramate) plugin for the [asdf version manager](https://asdf-vm.com).
 
 </div>
 
